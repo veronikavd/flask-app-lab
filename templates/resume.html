@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 text-center">
+        <img src="{{ url_for('static', filename='images/photo.jpg') }}" alt="Моє фото" class="img-fluid rounded-circle profile-img mb-3">
+        <h2>Вероніка Луцак</h2>
+        <p class="text-muted">Software developer</p>
+    </div>
+
+    <div class="col-md-8">
+        <section id="about" class="mb-4">
+            <h3>Про себе</h3>
+            <p>Студентка, вивчаю програмування, цікавлюся бекенд програмуванням.</p>
+        </section>
+
+        <section id="education" class="mb-4">
+            <h3>Освіта</h3>
+            <ul>
+                <li>Карпатський національний університет (2023 - теперішній час)</li>
+                <li>Спеціальність: Інженерія програмного забезпечення</li>
+            </ul>
+        </section>
+
+        <section id="skills" class="mb-4">
+            <h3>Навички</h3>
+            <span class="badge bg-primary">Python</span>
+            <span class="badge bg-success">Flask</span>
+            <span class="badge bg-secondary">HTML/CSS</span>
+            <span class="badge bg-dark">Git</span>
+        </section>
+    </div>
+</div>
+{% endblock %}
