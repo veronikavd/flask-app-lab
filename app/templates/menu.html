@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container">
     <a class="navbar-brand" href="{{ url_for('resume') }}">My Portfolio</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -11,6 +11,13 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('contacts') }}">Контакти</a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link text-warning" href="{{ url_for('users.greetings', name='User') }}">Lab 3 (Users)</a>
+        </li>
+         <li class="nav-item">
+            <a class="nav-link text-info" href="{{ url_for('products.index') }}">Lab 3 (Products)</a>
         </li>
       </ul>
     </div>

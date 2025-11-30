@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-4">Наші товари</h1>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Python Course</h5>
+                    <p class="card-text">Повний курс вивчення Python для початківців.</p>
+                    <h6 class="text-primary">Ціна: 500 грн</h6>
+                    <a href="#" class="btn btn-outline-primary mt-2">Купити</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Flask Guide</h5>
+                    <p class="card-text">Посібник зі створення веб-сайтів на Flask.</p>
+                    <h6 class="text-primary">Ціна: 300 грн</h6>
+                    <a href="#" class="btn btn-outline-primary mt-2">Купити</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Mentorship</h5>
+                    <p class="card-text">Індивідуальна консультація з ментором.</p>
+                    <h6 class="text-primary">Ціна: 1000 грн</h6>
+                    <a href="#" class="btn btn-outline-primary mt-2">Купити</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

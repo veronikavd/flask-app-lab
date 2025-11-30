@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Greeting Page{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group mt-3">
+            <h5 class="mb-3">Меню користувача</h5>
+            <a href="{{ url_for('users.greetings', name='John', age=30) }}" class="list-group-item list-group-item-action">
+                Greet John
+            </a>
+            <a href="{{ url_for('users.admin') }}" class="list-group-item list-group-item-action">
+                Admin Panel
+            </a>
+            <a href="{{ url_for('resume') }}" class="list-group-item list-group-item-action">
+                На головну
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-9 mt-3">
+        <h2>Hello, {{ name }}!</h2>
+        
+        {% if age %}
+            <p class="lead">You are {{ age }} years old.</p>
+        {% else %}
+            <p class="text-muted">Age is unknown.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
