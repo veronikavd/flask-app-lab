@@ -1,20 +1,24 @@
 {% extends "base.html" %}
+{% from "_render_field.html" import render_field %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <h1 class="text-center mb-4">Напишіть мені</h1>
-        <form class="p-4 border rounded bg-white shadow-sm">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="name@example.com">
-            </div>
-            <div class="mb-3">
-                <label for="msg" class="form-label">Повідомлення</label>
-                <textarea class="form-control" id="msg" rows="3"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Відправити</button>
-        </form>
+        <h1 class="text-center mb-4">Зв'яжіться зі мною</h1>
+        
+        <div class="card p-4 shadow-sm bg-light">
+            <form method="POST" action="{{ url_for('users.contact') }}" novalidate>
+                {{ form.hidden_tag() }}
+                
+                {{ render_field(form.name, placeholder="Введіть ваше ім'я") }}
+                {{ render_field(form.email, placeholder="name@example.com") }}
+                {{ render_field(form.phone, placeholder="+380...") }}
+                {{ render_field(form.subject) }}
+                {{ render_field(form.message, rows=5) }}
+                
+                {{ form.submit(class="btn btn-primary w-100") }}
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
