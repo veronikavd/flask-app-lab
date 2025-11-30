@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <h2 class="text-center mb-4">Вхід</h2>
+        <div class="card p-4 shadow-sm">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Логін</label>
+                    <input type="text" name="username" class="form-control" placeholder="admin" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Пароль</label>
+                    <input type="password" name="password" class="form-control" placeholder="123" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Увійти</button>
+            </form>
+        </div>
+        <p class="text-center mt-3 text-muted">Підказка: admin / 123</p>
+    </div>
+</div>
+{% endblock %}
