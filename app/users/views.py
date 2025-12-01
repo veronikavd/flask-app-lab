@@ -1,107 +1,118 @@
-from flask import render_template, request, redirect, url_for, flash, session, make_response
 from . import user_bp
-from .forms import ContactForm, LoginForm
-import json
-
-USER_DATA = {
-    "username": "admin",
-    "password": "12345"
-}
-
-@user_bp.route("/contact", methods=["GET", "POST"])
-def contact():
-    form = ContactForm()
-    if form.validate_on_submit():
-        log_data = {
-            "name": form.name.data,
-            "email": form.email.data,
-            "phone": form.phone.data,
-            "subject": form.subject.data,
-            "message": form.message.data
-        }
-        
-        try:
-            with open("form_log.txt", "a", encoding="utf-8") as f:
-                f.write(json.dumps(log_data, ensure_ascii=False) + "\n")
-            flash(f"Повідомлення від {form.name.data} успішно надіслано!", "success")
-        except Exception as e:
-            flash(f"Помилка запису в лог: {e}", "danger")
-            
-        return redirect(url_for("users.contact"))
-        
-    return render_template("contacts.html", form=form)
+from flask import request, redirect, url_for, render_template, session, flash, make_response
+from datetime import timedelta, datetime
+from app.users.auth import authenticate_user
 
 
-@user_bp.route("/login", methods=["GET", "POST"])
-def login():
-    if "username" in session:
-        return redirect(url_for("users.profile"))
 
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        remember = form.remember.data
-
-        if username == USER_DATA["username"] and password == USER_DATA["password"]:
-            session["username"] = username
-            flash(f"Ви успішно увійшли! Запам'ятати мене: {remember}", "success")
-            return redirect(url_for("users.profile"))
-        else:
-            flash("Невірний логін або пароль", "danger")
-            return redirect(url_for("users.login"))
-
-    return render_template("users/login.html", form=form)
+@user_bp.route('/')
+def main():
+    return render_template("base.html")
 
 
-@user_bp.route("/logout")
-def logout():
-    session.pop("username", None)
-    flash("Ви вийшли з системи", "info")
-    return redirect(url_for("users.login"))
+#users
 
-@user_bp.route("/profile")
-def profile():
-    if "username" not in session:
-        flash("Будь ласка, увійдіть спочатку", "warning")
-        return redirect(url_for("users.login"))
-    return render_template("users/profile.html", username=session["username"])
-
-@user_bp.route("/hi/<string:name>")
+@user_bp.route("/hi/<string:name>")   #/hi/ivan?age=45
 def greetings(name):
-    return render_template("users/hi.html", name=name)
+    name = name.upper()
+    age = request.args.get("age", None, int)   
+
+    return render_template("hi.html", 
+                           name=name, age=age)
 
 @user_bp.route("/admin")
 def admin():
-    return redirect(url_for("users.greetings", name="administrator", age=45))
+    to_url = url_for("users.greetings", name="administrator", age=45, _external=True)     # "http://localhost:8080/hi/administrator?age=45"
+    print(to_url)
+    return redirect(to_url)
 
-@user_bp.route("/add_cookie", methods=["POST"])
-def add_cookie():
-    key = request.form.get("key")
-    value = request.form.get("value")
-    max_age = request.form.get("max_age", type=int) or 3600
-    resp = make_response(redirect(url_for("users.profile")))
-    resp.set_cookie(key, value, max_age=max_age)
-    flash(f"Кукі '{key}' додано успішно!", "success")
-    return resp
+@user_bp.route('/homepage')
+def home():
+    """View for the Home page of your website."""
+    agent = request.user_agent
 
-@user_bp.route("/delete_cookie", methods=["POST"])
+    return render_template("home.html", agent=agent)
+
+@user_bp.route('/set_color/<color>')
+def set_color(color):
+    response = make_response(redirect(url_for('users.profile')))
+    response.set_cookie('color_scheme', color)
+    return response
+
+
+@user_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get("login")
+        password = request.form.get("password")
+        if authenticate_user(username, password):
+            session['username'] = username
+            flash("Success: You have logged in successfully.", "success")
+            return redirect(url_for('users.profile'))
+        else:
+            flash("Error: Invalid username or password.", "danger")
+
+    return render_template("login.html")
+
+@user_bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if "username" in session:
+        if request.method == 'POST':
+            # Додавання кукі
+            if 'key-cookie' in request.form and 'value-cookie' in request.form:
+                key = request.form['key-cookie']
+                value = request.form['value-cookie']
+                expires = int(request.form['expires'])
+                response = make_response(redirect(url_for('users.profile')))
+                response.set_cookie(key, value, max_age=expires)
+                flash('Кука додана успішно!', 'success')
+                return response
+
+            # Видалення кукі за ключем
+            if 'delete-cookie' in request.form:
+                key = request.form['delete-cookie']
+                response = make_response(redirect(url_for('users.profile')))
+                response.set_cookie(key, '', expires=0)
+                flash('Кука видалена успішно!', 'success')
+                return response
+
+            # Видалення всіх кукі
+            if 'delete-all-cookies' in request.form:
+                response = make_response(redirect(url_for('users.profile')))
+                for cookie in request.cookies:
+                    response.set_cookie(cookie, '', expires=0)
+                flash('Всі кукі видалені успішно!', 'success')
+                return response
+        username_value = session["username"]
+        cookies = request.cookies
+        return render_template("profile.html", username=username_value, cookies=cookies)
+    flash("Invalid: Session.", "danger")
+    return redirect(url_for("users.login"))
+
+
+
+@user_bp.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('users.login'))
+
+@user_bp.route('/set_cookie')
+def set_cookie():
+    response = make_response('Кука встановлена')
+    response.set_cookie('username', 'student', max_age=timedelta(seconds=60), path='/')
+    # Якщо ви хочете просто видалити куку color, ви можете зробити це
+    response.set_cookie('color', '', expires=0, path='/')  # видаляємо куку color
+    return response
+
+@user_bp.route('/get_cookie')
+def get_cookie():
+    username = request.cookies.get('username')
+    if username:
+        return f'Користувач: {username}'
+    return 'Кука не знайдена'
+
+@user_bp.route('/delete_cookie')
 def delete_cookie():
-    key = request.form.get("key")
-    resp = make_response(redirect(url_for("users.profile")))
-    if key == "ALL":
-        for cookie_key in request.cookies:
-            if cookie_key != 'session':
-                resp.set_cookie(cookie_key, '', expires=0)
-        flash("Всі кукі видалено!", "warning")
-    else:
-        resp.set_cookie(key, '', expires=0)
-        flash(f"Кукі '{key}' видалено!", "info")
-    return resp
-
-@user_bp.route("/change_theme/<theme>")
-def change_theme(theme):
-    resp = make_response(redirect(url_for("users.profile")))
-    resp.set_cookie("theme", theme)
-    return resp
+    response = make_response('Кука видалена')
+    response.set_cookie('username', '', expires=0, path='/')  # видаляємо куку username
+    return response

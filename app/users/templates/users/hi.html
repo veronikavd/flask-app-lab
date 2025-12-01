@@ -3,30 +3,35 @@
 {% block title %}Greeting Page{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-3">
-        <div class="list-group mt-3">
-            <h5 class="mb-3">Меню користувача</h5>
-            <a href="{{ url_for('users.greetings', name='John', age=30) }}" class="list-group-item list-group-item-action">
-                Greet John
-            </a>
-            <a href="{{ url_for('users.admin') }}" class="list-group-item list-group-item-action">
-                Admin Panel
-            </a>
-            <a href="{{ url_for('resume') }}" class="list-group-item list-group-item-action">
-                На головну
-            </a>
-        </div>
-    </div>
 
-    <div class="col-md-9 mt-3">
-        <h2>Hello, {{ name }}!</h2>
-        
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+        <a class="navbar-brand" href="#">FlaskApp</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('users.greetings', name='John') }}">Greet John</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('users.admin') }}">Admin</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="container mt-5">
+        <h1 class="display-4">Hello :)</h1>
+        <h2 class="mt-4">User: {{ name }}</h2>
+
         {% if age %}
-            <p class="lead">You are {{ age }} years old.</p>
+            <h3 class="text-success">Age: {{ age }}</h3>
         {% else %}
-            <p class="text-muted">Age is unknown.</p>
+            <h3 class="text-danger">Age: Not provided</h3>
         {% endif %}
     </div>
-</div>
+
 {% endblock %}

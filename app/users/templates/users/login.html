@@ -1,29 +1,20 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% from "_render_field.html" import render_field %}
+{% block title %}Сторінка входу{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-4">
-        <h2 class="text-center mb-4">Вхід</h2>
-        <div class="card p-4 shadow-sm">
-            
-            <form method="POST" novalidate>
-                
-                {{ form.hidden_tag() }}
-                
-                {{ render_field(form.username, placeholder="Введіть логін") }}
-                {{ render_field(form.password, placeholder="Введіть пароль") }}
-                
-                <div class="mb-3 form-check">
-                    {{ form.remember(class="form-check-input") }}
-                    {{ form.remember.label(class="form-check-label") }}
-                </div>
-                
-                {{ form.submit(class="btn btn-primary w-100") }}
-            </form>
+<div class="container mt-5">
+    <h2 class="text-center">Увійти в систему</h2>
+    <form action="" method="post" class="w-50 mx-auto">
+        <div class="mb-3">
+            <label for="login" class="form-label">Ім'я користувача</label>
+            <input type="text" class="form-control" id="login" name="login" required>
         </div>
-        <p class="text-center mt-3 text-muted">Підказка: admin / 12345</p>
-    </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Пароль</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Увійти</button>
+    </form>
 </div>
 {% endblock %}

@@ -1,8 +1,17 @@
-from flask import Blueprint, render_template
+from flask import current_app, request, redirect, url_for, render_template, abort
 
-main_bp = Blueprint('main', __name__)
 
-@main_bp.route("/")
-@main_bp.route("/resume")
-def resume():
-    return render_template("resume.html", title="Моє Резюме")
+@current_app.route('/')
+def main():
+    return render_template("index.html")
+
+@current_app.route('/homepage') 
+def home():
+    """View for the Home page of your website."""
+    agent = request.user_agent
+
+    return render_template("home.html", agent=agent)
+
+@current_app.route('/resume')
+def show_resume():
+    return render_template("resume.html")
