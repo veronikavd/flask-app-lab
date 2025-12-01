@@ -1,11 +1,28 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from app.config import config
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'super_secret_key_lab4'  # <--- ДОДАЙТЕ ЦЕЙ РЯДОК
+db = SQLAlchemy()
+migrate = Migrate()
 
-from app import views
-from app.users import user_bp
-app.register_blueprint(user_bp, url_prefix="/users")
+def create_app(config_name='default'):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
 
-from app.products import product_bp
-app.register_blueprint(product_bp, url_prefix="/products")
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    from app.views import main_bp
+    app.register_blueprint(main_bp)
+
+    from app.users import user_bp
+    app.register_blueprint(user_bp, url_prefix="/users")
+
+    from app.products import product_bp
+    app.register_blueprint(product_bp, url_prefix="/products")
+
+    from app.posts import post_bp
+    app.register_blueprint(post_bp, url_prefix="/post")
+
+    return app

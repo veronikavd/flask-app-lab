@@ -1,21 +1,20 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container">
-    <a class="navbar-brand" href="{{ url_for('resume') }}">My Portfolio</a>
+    <a class="navbar-brand" href="{{ url_for('main.resume') }}">My Portfolio</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('resume') }}">Резюме</a>
+          <a class="nav-link" href="{{ url_for('main.resume') }}">Резюме</a>
         </li>
-        
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('users.contact') }}">Контакти</a>
         </li>
-
-        <li class="nav-item border-start mx-2 d-none d-lg-block border-secondary"></li>
-
+        <li class="nav-item">
+            <a class="nav-link text-warning" href="{{ url_for('posts.list_posts') }}">Блог (CRUD)</a>
+        </li>
         {% if session.get('username') %}
             <li class="nav-item">
                 <a class="nav-link fw-bold text-light" href="{{ url_for('users.profile') }}">

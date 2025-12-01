@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="card shadow-lg p-4">
+        <h1 class="mb-3">{{ post.title }}</h1>
+        <div class="text-muted mb-4 small">
+            {{ post.posted.strftime('%d.%m.%Y') }} | Автор: {{ post.author }} | Категорія: {{ post.category }}
+        </div>
+        <div class="card-text lead mt-4 mb-5">{{ post.content }}</div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('.update_post', post_id=post.id) }}" class="btn btn-warning">Редагувати</a>
+            <a href="{{ url_for('.delete_post', post_id=post.id) }}" class="btn btn-danger">Видалити</a>
+            <a href="{{ url_for('.list_posts') }}" class="btn btn-secondary ms-auto">Назад</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

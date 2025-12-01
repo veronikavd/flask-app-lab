@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="alert alert-danger text-center">
+            <h2>Видалення</h2>
+            <p>Видалити пост <strong>"{{ post.title }}"</strong>?</p>
+            <form method="POST" action="{{ url_for('.delete_post', post_id=post.id) }}">
+                <button type="submit" class="btn btn-danger btn-lg mt-3">Так</button>
+            </form>
+            <a href="{{ url_for('.detail_post', post_id=post.id) }}" class="btn btn-secondary mt-3">Ні</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
