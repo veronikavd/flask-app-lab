@@ -1,0 +1,37 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h3>Профіль користувача</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <img src="https://via.placeholder.com/150" alt="Avatar" class="img-thumbnail rounded-circle mb-3">
+                    <h4>{{ user.username }}</h4>
+                </div>
+                <div class="col-md-8">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>ID:</strong> {{ user.id }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Email:</strong> {{ user.email }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Статус:</strong> <span class="badge bg-success">Active</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="mt-4">
+                        <a href="{{ url_for('bp.add_post') }}" class="btn btn-primary">Створити пост</a>
+                        <a href="{{ url_for('bp.logout') }}" class="btn btn-danger">Вийти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

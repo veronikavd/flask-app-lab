@@ -1,5 +1,4 @@
 {% extends "base.html" %} 
-{% import "_render_field.html" as render %}
 
 {% block content %}
 <div class="container mt-5">
@@ -26,8 +25,8 @@
         </div>
         
         <div class="mb-3">
-            {{ form.author_id.label(class="form-label") }}
-            {{ form.author_id(class="form-select") }}
+            {{ form.category.label(class="form-label") }}
+            {{ form.category(class="form-select") }}
         </div>
 
         <div class="mb-3">

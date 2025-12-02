@@ -3,6 +3,7 @@ from typing import List
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, DateTime, Boolean, Text, ForeignKey, Enum, Table, Column
+from flask_login import UserMixin
 
 CATEGORIES = [
     ('Tech', 'Technology'), 
@@ -17,7 +18,7 @@ post_tags = db.Table(
     db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True)
 )
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -44,7 +45,6 @@ class Post(db.Model):
     category: Mapped[str] = mapped_column(Enum(*[c[0] for c in CATEGORIES], name='post_categories'), default='Tech')
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    
     user: Mapped["User"] = relationship(back_populates="posts")
     
     tags: Mapped[List["Tag"]] = relationship(
