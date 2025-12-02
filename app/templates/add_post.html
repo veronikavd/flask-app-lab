@@ -1,0 +1,46 @@
+{% extends "base.html" %} 
+{% import "_render_field.html" as render %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Створити Новий Пост</h2>
+    <hr>
+    
+    <form method="POST" action="{{ url_for('bp.add_post') }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control") }}
+            {% for error in form.title.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control") }}
+            {% for error in form.content.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.author_id.label(class="form-label") }}
+            {{ form.author_id(class="form-select") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.tags.label(class="form-label") }}
+            {{ form.tags(class="form-select", multiple="multiple") }} 
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ form.is_active(class="form-check-input") }}
+            {{ form.is_active.label(class="form-check-label") }}
+        </div>
+        
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %}

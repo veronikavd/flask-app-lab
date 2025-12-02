@@ -1,23 +1,34 @@
-{% extends "base.html" %}
-
-{% block title %}Головна{% endblock %}
+{% extends "base.html" %} 
 
 {% block content %}
-    <div class="jumbotron mt-4">
-        <h1 class="display-4">Ласкаво просимо до Flask-додатку!</h1>
-        <p class="lead">Цей додаток демонструє основи роботи з Flask, включаючи маршрутизацію, шаблонізацію та автентифікацію.</p>
-        <hr class="my-4">
-        <p>Використовуйте навігаційне меню для переходу до різних частин додатку.</p>
-        <a class="btn btn-primary btn-lg" href="{{ url_for('users.login') }}" role="button">Увійти</a>
+<div class="container mt-5">
+    <h2>📝 Всі Опубліковані Пости</h2>
+    <p><a href="{{ url_for('bp.add_post') }}" class="btn btn-success">Створити Новий Пост</a></p>
+    
+    {% for post in posts %}
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">{{ post.title }}</h5>
+            
+            <p class="card-text text-muted small">
+                Автор: <strong>{{ post.user.username }}</strong> | 
+                Категорія: <span class="badge bg-info text-dark">{{ post.category }}</span> | 
+                Дата: {{ post.publish_date.strftime('%Y-%m-%d') }}
+            </p>
+            
+            <p class="card-text">{{ post.content[:150] }}...</p>
+            
+            <div class="mb-2">
+                {% for tag in post.tags %}
+                    <span class="badge bg-secondary">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+
+            <a href="{{ url_for('bp.post_detail', post_id=post.id) }}" class="btn btn-primary btn-sm">Читати далі</a>
+        </div>
     </div>
-
-    <section>
-        <h2>Про проект</h2>
-        <p>Цей проект розроблено для навчання та експериментування з Flask.</p>
-    </section>
-
-    <section>
-        <h2>Контакти</h2>
-        <p>Для отримання додаткової інформації, будь ласка, зв'яжіться з нами через електронну пошту: example@example.com</p>
-    </section>
+    {% else %}
+        <p class="alert alert-warning">Постів поки що немає. Додайте перший пост!</p>
+    {% endfor %}
+</div>
 {% endblock %}
