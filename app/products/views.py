@@ -1,10 +1,32 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+import os
+import secrets
+from PIL import Image
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from app.models import Post, User, Tag, db
-from app.forms import PostForm, RegistrationForm, LoginForm
+from app.forms import PostForm, RegistrationForm, LoginForm, UpdateAccountForm
 from app import bcrypt
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime, timezone
 from . import product_bp 
 
+@product_bp.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.now(timezone.utc)
+        db.session.commit()
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(current_app.root_path, 'static/profile_pics', picture_fn)
+
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
 
 @product_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -36,16 +58,28 @@ def login():
             flash('Вхід невдалий. Перевірте email та пароль.', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-@product_bp.route('/logout')
-def logout():
-    logout_user()
-    flash('Ви вийшли із системи.', 'info')
-    return redirect(url_for('bp.index'))
-
-@product_bp.route('/account')
+@product_bp.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account', user=current_user)
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+        
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Ваш профіль оновлено!', 'success')
+        return redirect(url_for('bp.account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        form.about_me.data = current_user.about_me
+        
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('account.html', title='Account', image_file=image_file, form=form)
 
 @product_bp.route('/users_list')
 @login_required
@@ -54,6 +88,12 @@ def users_list():
     user_count = len(users)
     return render_template('users_list.html', title='Users List', users=users, user_count=user_count)
 
+@product_bp.route('/logout')
+def logout():
+    logout_user()
+    flash('Ви вийшли із системи.', 'info')
+    return redirect(url_for('bp.index')) 
+    
 @product_bp.route('/')
 @product_bp.route('/index')
 def index():
@@ -65,10 +105,9 @@ def index():
     return render_template('index.html', posts=posts)
 
 @product_bp.route('/add_post', methods=['GET', 'POST'])
-@login_required 
+@login_required
 def add_post():
     form = PostForm()
-    
     if form.validate_on_submit():
         new_post = Post(
             title=form.title.data,
@@ -76,9 +115,8 @@ def add_post():
             is_active=form.is_active.data,
             publish_date=form.publish_date.data,
             category=form.category.data,
-            user_id=current_user.id 
+            user_id=current_user.id
         )
-        
         tag_ids = form.tags.data
         if tag_ids:
              selected_tags = db.session.execute(
@@ -88,16 +126,15 @@ def add_post():
         
         db.session.add(new_post)
         db.session.commit()
-        
         flash(f'Post "{new_post.title}" added successfully!', 'success')
         return redirect(url_for('bp.index')) 
-
     return render_template('add_post.html', form=form)
 
 @product_bp.route('/post/<int:post_id>')
 def post_detail(post_id):
     post = db.session.execute(
-        db.select(Post).filter_by(id=post_id)
+        db.select(Post)
+        .filter_by(id=post_id)
         .options(db.selectinload(Post.tags), db.selectinload(Post.user))
     ).scalar_one_or_none()
     if post is None:

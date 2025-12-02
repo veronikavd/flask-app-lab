@@ -1,6 +1,6 @@
 from . import db
-from typing import List
-from datetime import datetime
+from typing import List, Optional
+from datetime import datetime, timezone
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, DateTime, Boolean, Text, ForeignKey, Enum, Table, Column
 from flask_login import UserMixin
@@ -26,6 +26,12 @@ class User(db.Model, UserMixin):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(256), nullable=False)
     
+    image_file: Mapped[str] = mapped_column(String(20), nullable=False, default='default.jpg')
+    about_me: Mapped[Optional[str]] = mapped_column(String(140))
+    last_seen: Mapped[Optional[datetime]] = mapped_column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+
     posts: Mapped[List["Post"]] = relationship(
         back_populates="user", 
         cascade="all, delete-orphan"
@@ -49,7 +55,7 @@ class Post(db.Model):
     
     tags: Mapped[List["Tag"]] = relationship(
         secondary=post_tags,
-        back_populates="posts"
+        back_populates="posts" 
     )
     
     def __repr__(self):
@@ -62,7 +68,7 @@ class Tag(db.Model):
 
     posts: Mapped[List["Post"]] = relationship(
         secondary=post_tags,
-        back_populates="tags"
+        back_populates="tags" 
     )
     
     def __repr__(self):
